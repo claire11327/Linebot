@@ -22,15 +22,15 @@ class TocMachine(GraphMachine):
 
     def is_going_to_weather_location(self, event):
         text = event.message.text
-        reply_token = event.reply_token
+        #reply_token = event.reply_token
         Location = get_location()
         if text in Location:
             Location_id = Location.index(text)
             print("Location_id: ",Location_id)
-            send_text_message(reply_token,"查詢"+text)
+            #send_text_message(reply_token,"查詢"+text)
             return True
         else:
-            send_text_message(reply_token,"無此資料")
+            #send_text_message(reply_token,"無此資料")
             return False
         
 
