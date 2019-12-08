@@ -13,25 +13,36 @@ from utils import send_text_message
 load_dotenv()
 
 
-
 machine = TocMachine(
-    states=["user", "now_weather", "weather_forcast","HD_Rader","weather_location"],
+    states=["user", "HD_Rader", "forcast", "weather", "location"],
     transitions=[
         {
-            "trigger": "advance","source": "user","dest": "now_weather", "conditions": "is_going_to_now_weather",
+            "trigger": "advance",
+            "source": "user",
+            "dest": "HD_Rader",
+            "conditions": "is_going_to_HD_Rader",
         },
         {
-            "trigger": "advance","source": "now_weather","dest": "weather_location","conditions": "is_going_to_weather_location",
+            "trigger": "advance",
+            "source": "user",
+            "dest": "forcast",
+            "conditions": "is_going_to_forcast",
         },
         {
-            "trigger": "advance","source": "user","dest": "weather_forcast","conditions": "is_going_to_weather_forcast",
+            "trigger": "advance",
+            "source": "user",
+            "dest": "weather",
+            "conditions": "is_going_to_weather",
         },
         {
-            "trigger": "advance","source": "user","dest": "HD_Rader","conditions": "is_going_to_HD_Rader",
+            "trigger": "advance",
+            "source": "weather",
+            "dest": "location",
+            "conditions": "is_going_to_location",
         },
-        
-        {   "trigger": "go_back", "source": ["now_weather", "weather_forcast", "HD_Rader", "weather_location"], "dest": "user"},
+        {   "trigger": "go_back", "source": ["forcast","HD_Rader","location"], "dest": "user" }
     ],
+
     initial="user",
     auto_transitions=False,
     show_conditions=True,
@@ -86,7 +97,7 @@ def webhook_handler():
     signature = request.headers["X-Line-Signature"]
     # get request body as text
     body = request.get_data(as_text=True)
-    app.logger.info(f"Request body: {body}")
+    app.logger.info("Request body: {body}")
 
     # parse webhook body
     try:
@@ -102,8 +113,8 @@ def webhook_handler():
             continue
         if not isinstance(event.message.text, str):
             continue
-        print(f"\nFSM STATE: {machine.state}")
-        print(f"REQUEST BODY: \n{body}")
+        print("\nFSM STATE: {machine.state}")
+        print("REQUEST BODY: \n{body}")
         response = machine.advance(event)
         if response == False:
             send_text_message(event.reply_token, "Not Entering any State")
