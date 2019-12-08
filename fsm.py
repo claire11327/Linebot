@@ -23,6 +23,7 @@ class TocMachine(GraphMachine):
     def is_going_to_weather_location(self, event):
         text = event.message.text
         reply_token = event.reply_token
+        Location = get_location()
         if text in Location:
             Location_id = Location.index(text)
             print("Location_id: ",Location_id)
