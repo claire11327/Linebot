@@ -23,6 +23,13 @@ class TocMachine(GraphMachine):
         text = event.message.text
         return text.lower() == "雷波圖"
 
+
+    def is_going_to_menu(self, event):
+        text = event.message.text
+        if "目錄" in text or "主選單" in text or "教學" in text:
+            return True
+        return False
+
     def is_going_to_set_location(self, event):
         text = event.message.text
         location = get_location()
@@ -48,7 +55,7 @@ class TocMachine(GraphMachine):
             
     def is_going_to_location(self, event):
         text = event.message.text
-        if text == 'y':
+        if text.lower() == 'y':
             global using_default
             using_default = 1        
             return True
@@ -98,6 +105,19 @@ class TocMachine(GraphMachine):
     def on_exit_HD_Rader(self):
         print("Leaving state1")
 
+    def on_enter_menu(self, event):
+        print("I'm entering menu")
+        reply_token = event.reply_token
+        text = "請輸入\'雷波圖\'：查詢目前雷波圖\n請輸入\'查詢\':查詢天氣\n請輸入\'[城市名]\':設定預設城市"
+        send_text_message(reply_token, text)
+        self.go_back()
+
+    def on_exit_menu(self):
+        print("Leaving menu")
+
+
+    
+
     def on_enter_set_location(self, event):
         print("I'm entering set_location")
         reply_token = event.reply_token
@@ -141,6 +161,7 @@ class TocMachine(GraphMachine):
         global using_default
         if using_default == 1:
             send_text_message(reply_token,text[default_ID])
+            print(default_ID)
             using_default = -1
         else:
             send_text_message(reply_token,text[ID])
@@ -155,7 +176,10 @@ class TocMachine(GraphMachine):
         print("I'm entering weather_forcast")
         reply_token = event.reply_token
         Text = get_forcast()
-        send_text_message(reply_token,Text[ID])
+        if using_default == 1:
+            send_text_message(reply_token,Text[default_ID])
+        else:
+            send_text_message(reply_token,Text[ID])
         self.go_back()
 
     def on_exit_forcast(self):

@@ -14,13 +14,20 @@ load_dotenv()
 
 
 machine = TocMachine(
-    states=["user", "HD_Rader", "set_location","search", "forcast", "weather", "location"],
+    states=["user", "HD_Rader", "set_location","search", "forcast", "weather", "location","menu"],
     transitions=[
         {
             "trigger": "advance",
             "source": "user",
             "dest": "HD_Rader",
             "conditions": "is_going_to_HD_Rader",
+        },
+
+        {
+            "trigger": "advance",
+            "source": "user",
+            "dest": "menu",
+            "conditions": "is_going_to_menu",
         },
         {
             "trigger": "advance",
@@ -52,7 +59,7 @@ machine = TocMachine(
             "dest": "weather",
             "conditions": "is_going_to_weather",
         },
-        {   "trigger": "go_back", "source": ["forcast","HD_Rader","weather","set_location"], "dest": "user" }
+        {   "trigger": "go_back", "source": ["forcast","HD_Rader","weather","set_location","menu"], "dest": "user" }
     ],
 
     initial="user",
@@ -129,7 +136,7 @@ def webhook_handler():
         print("REQUEST BODY: \n{body}")
         response = machine.advance(event)
         if response == False:
-            send_text_message(event.reply_token, "Not Entering any State")
+            send_text_message(event.reply_token, "輸入教學以查詢使用方法")
 
     return "OK"
 

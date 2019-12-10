@@ -79,11 +79,47 @@ The initial state is set to `user`.
 Every time `user` state is triggered to `advance` to another state, it will `go_back` to `user` state after the bot replies corresponding message.
 
 * user
-	* Input: "go to state1"
-		* Reply: "I'm entering state1"
+	* Input: "教學"
+		* Go to: `menu`
+		* Reply: "請輸入\'雷波圖\'：查詢目前雷波圖\n請輸入\'查詢\':查詢天氣\n請輸入\'[城市名]\':設定預設城市"
+		* Go back: `user`
 
-	* Input: "go to state2"
-		* Reply: "I'm entering state2"
+	* Input: "[城市名]"
+		* Go to: `set_location`
+		* Reply: [城市的圖片]
+		* Go back: `user`
+
+	* Input: "雷波圖"
+		* Go to: `HD_Rader`
+		* Reply: [目前的雷波圖]
+		* Go back: `user`
+
+	* Input: "查詢"
+		* Go to: `search`
+		* Reply: "請輸入查詢的城市,輸入\'y\'：使用預設城市"
+
+
+* search
+	* Input: "y" , "[城市名]"
+		* Go to: `location`
+		* Reply: "請輸入\"目前\"：查詢現在天氣，輸入\"預報\":查詢明天天氣"
+
+
+* location
+	* Input: "目前" 
+		* Go to: `weather`
+		* Reply: "[城市目前天氣]"
+		* Go back: `user`
+	* Input: "預報"
+		* Go to: `forcast`
+		* Reply: "[城市明天天氣]"
+		* Go back: `user`
+		
+
+
+
+
+
 
 ## Deploy
 Setting to deploy webhooks on Heroku.
